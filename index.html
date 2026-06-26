@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>User CRUD</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.19.0/dist/tabler-icons.min.css"/>
+  <link rel="stylesheet" href="./CRUDstyles_4.css"/>
+</head>
+<body>
+
+<nav>
+  <div class="nav-in">
+    <div class="brand">
+      <div class="brand-dot"><i class="ti ti-users" aria-hidden="true"></i></div>
+      CRUD
+    </div>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="hero-in">
+    <div class="hero-text">
+      <h1>Manage your<br><span>team members</span></h1>
+      <p>Add, edit and organise your users in one place. Start by adding your first team member.</p>
+      <div class="hero-actions">
+        <button class="btn btn-primary" id="btnCreate"><i class="ti ti-user-plus"></i> Add user</button>
+      </div>
+    </div>
+    <div class="hero-art">
+      <svg class="illu" viewBox="0 0 200 140" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="100" cy="70" r="52" stroke="#e0e7ff" stroke-width="1" stroke-dasharray="6 4"/>
+        <circle cx="100" cy="70" r="38" fill="#eef2ff"/>
+        <circle cx="100" cy="58" r="13" fill="#6366f1"/>
+        <ellipse cx="100" cy="87" rx="20" ry="12" fill="#6366f1" opacity=".18"/>
+        <ellipse cx="100" cy="84" rx="17" ry="9" fill="#6366f1" opacity=".35"/>
+        <circle cx="100" cy="58" r="4.5" fill="#fff"/>
+        <circle cx="148" cy="32" r="11" fill="#fef3c7" stroke="#fcd34d" stroke-width="1"/>
+        <text x="148" y="37" text-anchor="middle" font-size="11" fill="#92400e">+</text>
+        <circle cx="56" cy="108" r="9" fill="#d1fae5" stroke="#6ee7b7" stroke-width="1"/>
+        <text x="56" y="113" text-anchor="middle" font-size="10" fill="#065f46">&#10003;</text>
+        <circle cx="163" cy="95" r="8" fill="#ede9fe" stroke="#c4b5fd" stroke-width="1"/>
+        <text x="163" y="100" text-anchor="middle" font-size="9" fill="#4c1d95">@</text>
+        <circle cx="42" cy="45" r="7" fill="#fee2e2" stroke="#fca5a5" stroke-width="1"/>
+        <text x="42" y="50" text-anchor="middle" font-size="9" fill="#7f1d1d">!</text>
+      </svg>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <div class="stats">
+    <div class="stat">
+      <div class="stat-icon" style="background:#eef2ff"><i class="ti ti-users" style="color:#6366f1"></i></div>
+      <div class="stat-label">Total users</div>
+      <div class="stat-val" id="sTotal" style="color:#6366f1">0</div>
+    </div>
+    <div class="stat">
+      <div class="stat-icon" style="background:#f0fdf4"><i class="ti ti-user-check" style="color:#22c55e"></i></div>
+      <div class="stat-label">Added today</div>
+      <div class="stat-val" id="sToday" style="color:#22c55e">0</div>
+    </div>
+    <div class="stat">
+      <div class="stat-icon" style="background:#fef9c3"><i class="ti ti-world" style="color:#ca8a04"></i></div>
+      <div class="stat-label">Domains</div>
+      <div class="stat-val" id="sDomains" style="color:#ca8a04">0</div>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <div class="search-wrap">
+      <i class="ti ti-search" aria-hidden="true"></i>
+      <input class="search-in" id="searchIn" type="search" placeholder="Search by name or email…" autocomplete="off"/>
+    </div>
+  </div>
+
+  <div id="mainContent"></div>
+  <div class="pg-wrap" id="pgWrap"></div>
+</div>
+
+<div class="toast-tray" id="toastTray"></div>
+
+<!-- Create / Edit modal -->
+<div class="overlay" id="editOverlay" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal">
+    <div class="modal-hd">
+      <div class="modal-hd-icon" id="modalIcon"><i class="ti ti-user-plus"></i></div>
+      <div>
+        <h2 id="modalTitle">Add user</h2>
+        <p id="modalSub">Fill in the details below</p>
+      </div>
+      <button class="icon-close" id="closeEdit" aria-label="Close"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editId"/>
+      <div class="field-row">
+        <div class="field">
+          <label for="iFirst">First name</label>
+          <input type="text" id="iFirst" placeholder="John" autocomplete="off"/>
+        </div>
+        <div class="field">
+          <label for="iLast">Last name</label>
+          <input type="text" id="iLast" placeholder="Doe" autocomplete="off"/>
+        </div>
+      </div>
+      <div class="field">
+        <label for="iEmail">Email address</label>
+        <input type="email" id="iEmail" placeholder="john.doe@company.com" autocomplete="off"/>
+        <p class="field-err" id="fErr" role="alert"></p>
+      </div>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-ghost" id="cancelEdit">Cancel</button>
+      <button class="btn btn-primary" id="saveUser"><i class="ti ti-check"></i><span id="saveLbl">Save user</span></button>
+    </div>
+  </div>
+</div>
+
+<!-- Delete modal -->
+<div class="overlay" id="delOverlay" role="dialog" aria-modal="true">
+  <div class="modal modal-sm">
+    <div class="modal-hd">
+      <div class="modal-hd-icon danger"><i class="ti ti-trash"></i></div>
+      <div>
+        <h2>Delete user</h2>
+        <p>This action can't be undone</p>
+      </div>
+      <button class="icon-close" id="closeDel" aria-label="Close"><i class="ti ti-x"></i></button>
+    </div>
+    <div class="modal-body">
+      <p class="del-body">You're about to permanently delete <strong id="delName"></strong> from your team. All their data will be removed.</p>
+    </div>
+    <div class="modal-ft">
+      <button class="btn btn-ghost" id="cancelDel">Keep user</button>
+      <button class="btn btn-danger" id="confirmDel"><i class="ti ti-trash"></i> Delete</button>
+    </div>
+  </div>
+</div>
+
+<script src="./CRUDscript_4.js"></script>
+</body>
+</html>
